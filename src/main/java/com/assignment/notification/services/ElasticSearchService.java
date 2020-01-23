@@ -1,21 +1,37 @@
 package com.assignment.notification.services;
 
+import com.assignment.notification.dto.ElasticQueryForSMSDTO;
 import com.assignment.notification.dto.SmsDetailsForElasticSearch;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.producer.Producer;
+
+import org.apache.lucene.queryparser.flexible.core.builders.QueryBuilder;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.common.unit.TimeValue;
+
+import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ElasticSearchService {
@@ -51,6 +67,34 @@ public class ElasticSearchService {
         logger.info(getResponse.toString());
     }
 
+    public List<ElasticQueryForSMSDTO> getAllSmsWithGivenText(String text) throws IOException {
+
+        List <ElasticQueryForSMSDTO> requiredSmsDetails = new ArrayList<>();
+
+        MatchQueryBuilder matchQueryBuilder;
+        matchQueryBuilder = QueryBuilders.matchQuery("message", text)
+                .fuzziness(Fuzziness.AUTO)
+                .prefixLength(2)
+                .maxExpansions(10);
+
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        sourceBuilder.query(matchQueryBuilder);
+        sourceBuilder.from(0);
+        sourceBuilder.size(10);
+        sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.indices("smsdata");
+        searchRequest.source(sourceBuilder);
+
+        SearchResponse searchResponse = client.search(searchRequest,RequestOptions.DEFAULT);
+        for(SearchHit searchHit : searchResponse.getHits().getHits()){
+//            logger.info(searchHit.getSourceAsString() + "\n");
+            ElasticQueryForSMSDTO smsDetail = new ObjectMapper().readValue(searchHit.getSourceAsString(),ElasticQueryForSMSDTO.class);
+            requiredSmsDetails.add(smsDetail);
+        }
+        return requiredSmsDetails;
+    }
 
 
 
