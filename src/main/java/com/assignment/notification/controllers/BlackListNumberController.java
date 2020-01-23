@@ -25,7 +25,7 @@ import java.util.Set;
 @RequestMapping("api/v1")
 public class BlackListNumberController {
 
-    public static final Logger logger = LoggerFactory.getLogger(SmsServiceController.class);
+    public static final Logger logger = LoggerFactory.getLogger(BlackListNumberController.class);
     private BlackListNumberService blackListNumberService;
 
     @Autowired

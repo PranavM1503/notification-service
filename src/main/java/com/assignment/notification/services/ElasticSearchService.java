@@ -2,6 +2,8 @@ package com.assignment.notification.services;
 
 import com.assignment.notification.dto.ElasticQueryForSMSDTO;
 import com.assignment.notification.dto.SmsDetailsForElasticSearch;
+import com.assignment.notification.dto.SmsTimeQueryDTO;
+import com.assignment.notification.dto.SmsTimeQueryRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.producer.Producer;
 
@@ -17,8 +19,10 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.common.unit.TimeValue;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
@@ -92,6 +96,38 @@ public class ElasticSearchService {
 //            logger.info(searchHit.getSourceAsString() + "\n");
             ElasticQueryForSMSDTO smsDetail = new ObjectMapper().readValue(searchHit.getSourceAsString(),ElasticQueryForSMSDTO.class);
             requiredSmsDetails.add(smsDetail);
+        }
+        return requiredSmsDetails;
+    }
+
+    public List<SmsTimeQueryDTO> getSmsBetweenGivenTime(SmsTimeQueryRequestDTO smsTimeQueryRequestDTO) throws IOException{
+        List<SmsTimeQueryDTO> requiredSmsDetails = new ArrayList<>();
+
+        String phone_number = smsTimeQueryRequestDTO.getPhone_number();
+        String startDateTime = smsTimeQueryRequestDTO.getStartDateTime();
+        String endDateTime = smsTimeQueryRequestDTO.getEndDateTime();
+
+        MatchQueryBuilder matchQueryBuilder = QueryBuilders.matchQuery("phone_number", phone_number);
+        RangeQueryBuilder rangeQueryForTime = QueryBuilders.rangeQuery("created_at").gte(startDateTime).lte(endDateTime);
+
+        BoolQueryBuilder resultQuery = QueryBuilders.boolQuery().must(matchQueryBuilder).must(rangeQueryForTime);
+
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        sourceBuilder.query(resultQuery);
+        sourceBuilder.from(0);
+        sourceBuilder.size(10);
+        sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.indices("smsdata");
+        searchRequest.source(sourceBuilder);
+
+        SearchResponse searchResponse = client.search(searchRequest,RequestOptions.DEFAULT);
+        for(SearchHit searchHit : searchResponse.getHits().getHits()){
+//            logger.info(searchHit.getSourceAsString() + "\n");
+            ElasticQueryForSMSDTO smsDetail = new ObjectMapper().readValue(searchHit.getSourceAsString(),ElasticQueryForSMSDTO.class);
+            SmsTimeQueryDTO smsTimeQueryDTO = new SmsTimeQueryDTO(smsDetail.getRequest_id(), smsDetail.getMessage());
+            requiredSmsDetails.add(smsTimeQueryDTO);
         }
         return requiredSmsDetails;
     }

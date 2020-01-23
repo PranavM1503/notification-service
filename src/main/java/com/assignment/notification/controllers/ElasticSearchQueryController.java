@@ -2,6 +2,8 @@ package com.assignment.notification.controllers;
 
 
 import com.assignment.notification.dto.ElasticQueryForSMSDTO;
+import com.assignment.notification.dto.SmsTimeQueryDTO;
+import com.assignment.notification.dto.SmsTimeQueryRequestDTO;
 import com.assignment.notification.services.ElasticSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,4 +39,20 @@ public class ElasticSearchQueryController {
 
         return new ResponseEntity<>(requiredDetails, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/find-message", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<SmsTimeQueryDTO>> getSmsBetweenGivenTime(@RequestBody SmsTimeQueryRequestDTO smsTimeQueryRequestDTO) throws IOException{
+
+        logger.info("Phone : " + smsTimeQueryRequestDTO.getPhone_number() + "\n");
+        logger.info("Start Time : " + smsTimeQueryRequestDTO.getStartDateTime() + "\n");
+        logger.info("End Time : " + smsTimeQueryRequestDTO.getEndDateTime() + "\n");
+
+        List <SmsTimeQueryDTO> requiredDetails = new ArrayList<>();
+
+        requiredDetails = elasticSearchService.getSmsBetweenGivenTime(smsTimeQueryRequestDTO);
+
+        return new ResponseEntity<>(requiredDetails, HttpStatus.OK);
+    }
+
+
 }
