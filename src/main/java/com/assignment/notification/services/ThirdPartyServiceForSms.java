@@ -38,7 +38,7 @@ public class ThirdPartyServiceForSms {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
-        headers.set("key", "7b73f76d-369e-11ea-9e4e-025282c394f2");
+        headers.set("key", <Enter Key here>);
 
 
         List <String> msisdn = new ArrayList<>();
