@@ -1,4 +1,4 @@
-package com.assignment.notification.entities;
+package com.assignment.notification.models;
 
 
 import lombok.Getter;

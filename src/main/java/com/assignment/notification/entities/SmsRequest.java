@@ -1,8 +1,11 @@
 package com.assignment.notification.entities;
 
+import lombok.Builder;
+
 import javax.persistence.*;
 import java.time.*;
 import java.util.UUID;
+
 
 
 @Entity
@@ -20,9 +23,9 @@ public class SmsRequest {
     private String updatedAt;
 
     public SmsRequest(){}
-    public SmsRequest(String phoneNumber, String message, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public SmsRequest(String phoneNumber,UUID requestId, String message, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.phoneNumber = phoneNumber;
-        this.requestId = UUID.randomUUID();
+        this.requestId = requestId;
         this.message = message;
         this.status = "Success";
         this.failureCode = 101;
@@ -70,4 +73,39 @@ public class SmsRequest {
         return updatedAt;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setRequestId(UUID requestId) {
+        this.requestId = requestId;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setFailureCode(int failureCode) {
+        this.failureCode = failureCode;
+    }
+
+    public void setFailureComments(String failureComments) {
+        this.failureComments = failureComments;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

@@ -2,6 +2,7 @@ package com.assignment.notification.dto;
 
 
 
+import lombok.Builder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,25 +11,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.time.LocalDateTime;
 
 
+@Builder
 public class SmsDetailDTO {
 
     private String phoneNumber;
     private String message;
-    @CreationTimestamp
     private LocalDateTime createdAt;
-    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-//    public smsRequestDTO(String phone_number, String message) {
-//        this.phone_number = phone_number;
-//        this.message = message;
-//    }
-
-//    private DtoTransformer DtoTransformer;
-////    @Autowired
-    public SmsDetailDTO (String phoneNumber, String message){
+    public SmsDetailDTO (String phoneNumber, String message, LocalDateTime createdAt, LocalDateTime updatedAt){
        this.phoneNumber = phoneNumber;
        this.message = message;
+       this.createdAt = createdAt;
+       this.updatedAt = updatedAt;
     }
 
 
