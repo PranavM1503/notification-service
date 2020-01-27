@@ -2,7 +2,7 @@ package com.assignment.notification.services;
 
 import com.assignment.notification.dto.ThirdPartyResponseDTO;
 import com.assignment.notification.dto.ThirdPartyResponseInterceptorDTO;
-import com.assignment.notification.entities.SmsApiModel;
+import com.assignment.notification.models.SmsApiModel;
 import com.assignment.notification.entities.SmsRequest;
 import com.assignment.notification.repositories.smsRequestRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +39,7 @@ public class ThirdPartyServiceForSms {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
         headers.set("key", "7b73f76d-369e-11ea-9e4e-025282c394f2");
+
 
 
         List <String> msisdn = new ArrayList<>();

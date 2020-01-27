@@ -5,6 +5,7 @@ import com.assignment.notification.dto.SmsDetailsForElasticSearch;
 import com.assignment.notification.dto.SmsTimeQueryDTO;
 import com.assignment.notification.dto.SmsTimeQueryRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.Producer;
 
 import org.apache.lucene.queryparser.flexible.core.builders.QueryBuilder;
@@ -38,11 +39,17 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
+//@Slf4j
 public class ElasticSearchService {
 
     private final Logger logger = LoggerFactory.getLogger(Producer.class);
+
+    private final RestHighLevelClient client;
+
     @Autowired
-    RestHighLevelClient client;
+    public ElasticSearchService(RestHighLevelClient restHighLevelClient){
+        this.client = restHighLevelClient;
+    }
 
     public void indexSmsData(SmsDetailsForElasticSearch smsDetailsForElasticSearch) throws IOException {
         Map<String, Object> jsonMap = new HashMap<>();

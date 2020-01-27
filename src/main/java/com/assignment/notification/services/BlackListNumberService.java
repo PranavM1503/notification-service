@@ -52,7 +52,7 @@ public class BlackListNumberService {
 
         boolean isBlackListedBefore = jedis.sismember("phone_number", checkBlackListNumberDTO.getPhoneNumber());
 
-        if(isBlackListedBefore == true){
+        if(isBlackListedBefore){
 
             jedis.srem("phone_number", checkBlackListNumberDTO.getPhoneNumber());
             BlackListNumber blackListNumber = new BlackListNumber(checkBlackListNumberDTO.getPhoneNumber());

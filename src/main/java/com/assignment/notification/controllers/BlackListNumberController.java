@@ -49,9 +49,7 @@ public class BlackListNumberController {
 
     @RequestMapping(value =  "/blacklist/remove", method = RequestMethod.POST)
     public String removeBlackListNumber(@RequestBody CheckBlackListNumberDTO checkBlackListNumberDTO){
-
-        String response = blackListNumberService.removeBlackListNumber(checkBlackListNumberDTO);
-        return response;
+        return blackListNumberService.removeBlackListNumber(checkBlackListNumberDTO);
     }
 
 

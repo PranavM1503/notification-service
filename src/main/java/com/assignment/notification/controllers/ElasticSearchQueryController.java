@@ -41,17 +41,21 @@ public class ElasticSearchQueryController {
     }
 
     @RequestMapping(value = "/find-message", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<SmsTimeQueryDTO>> getSmsBetweenGivenTime(@RequestBody SmsTimeQueryRequestDTO smsTimeQueryRequestDTO) throws IOException{
+    public ResponseEntity<Object> getSmsBetweenGivenTime(@RequestBody SmsTimeQueryRequestDTO smsTimeQueryRequestDTO) throws IOException{
 
-        logger.info("Phone : " + smsTimeQueryRequestDTO.getPhone_number() + "\n");
-        logger.info("Start Time : " + smsTimeQueryRequestDTO.getStartDateTime() + "\n");
-        logger.info("End Time : " + smsTimeQueryRequestDTO.getEndDateTime() + "\n");
+        logger.info("Phone : " + smsTimeQueryRequestDTO.getPhone_number());
+        logger.info("Start Time : " + smsTimeQueryRequestDTO.getStartDateTime());
+        logger.info("End Time : " + smsTimeQueryRequestDTO.getEndDateTime());
 
         List <SmsTimeQueryDTO> requiredDetails = new ArrayList<>();
 
         requiredDetails = elasticSearchService.getSmsBetweenGivenTime(smsTimeQueryRequestDTO);
 
-        return new ResponseEntity<>(requiredDetails, HttpStatus.OK);
+        if(requiredDetails.size() > 0){
+            return new ResponseEntity<>(requiredDetails, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("No Record Found", HttpStatus.OK);
     }
 
 
