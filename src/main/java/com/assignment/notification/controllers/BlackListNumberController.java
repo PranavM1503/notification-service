@@ -4,6 +4,7 @@ package com.assignment.notification.controllers;
 
 import com.assignment.notification.dto.BlackListNumberDTO;
 import com.assignment.notification.dto.CheckBlackListNumberDTO;
+import com.assignment.notification.models.BlackListNumberDisplay;
 import com.assignment.notification.models.BlackListResponse;
 import com.assignment.notification.services.BlackListNumberService;
 import org.slf4j.Logger;
@@ -33,12 +34,6 @@ public class BlackListNumberController {
         this.blackListNumberService = blackListNumberService;
     }
 
-//    @RequestMapping(value = "/blacklist", method = RequestMethod.POST)
-//    public String addBlackListNumber(@Valid  @RequestBody BlackListNumberDTO blackListNumberDTO) throws {
-//        blackListNumberService.saveBlackListNumber(blackListNumberDTO);
-//        return "Success";
-//    }
-
     @RequestMapping(value = "/blacklist", method = RequestMethod.POST)
     public ResponseEntity<BlackListResponse> addBlackListNumber(@Valid @RequestBody BlackListNumberDTO blackListNumberDTO){
         BlackListResponse blackListResponse = blackListNumberService.saveBlackListNumber(blackListNumberDTO);
@@ -47,11 +42,10 @@ public class BlackListNumberController {
     }
 
     @RequestMapping(value = "/blacklist", method = RequestMethod.GET)
-    public ResponseEntity<BlackListNumberDTO> getBlackListNumbers(){
+    public ResponseEntity<BlackListNumberDisplay> getBlackListNumbers(){
         List <String> numbers = blackListNumberService.getAllBlackListNumbers();
-        BlackListNumberDTO blackListNumberDTO = new BlackListNumberDTO(numbers);
-
-        return new ResponseEntity<BlackListNumberDTO>(blackListNumberDTO, HttpStatus.OK);
+        BlackListNumberDisplay blackListNumberDisplay = new BlackListNumberDisplay(numbers);
+        return new ResponseEntity<>(blackListNumberDisplay, HttpStatus.OK);
     }
 
     @RequestMapping(value =  "/blacklist/remove", method = RequestMethod.POST,  produces = MediaType.APPLICATION_JSON_VALUE)
@@ -59,18 +53,5 @@ public class BlackListNumberController {
         logger.info(checkBlackListNumberDTO.getPhoneNumber());
         BlackListResponse blackListResponse = blackListNumberService.removeBlackListNumber(checkBlackListNumberDTO);
         return new ResponseEntity<>(blackListResponse, HttpStatus.OK);
-//        return blackListNumberService.removeBlackListNumber(checkBlackListNumberDTO);
     }
-
-
-//
-//    @RequestMapping(value =  "/blacklist/remove", method = RequestMethod.POST)
-//    public String removeBlackListNumber(@RequestBody CheckBlackListNumberDTO checkBlackListNumberDTO){
-//        logger.info(checkBlackListNumberDTO.toString());
-//        logger.info(checkBlackListNumberDTO.getPhoneNumber());
-//        String response = blackListNumberService.removeBlackListNumber(checkBlackListNumberDTO);
-//        return response;
-//    }
-
-
 }

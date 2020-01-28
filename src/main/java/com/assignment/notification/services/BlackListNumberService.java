@@ -44,7 +44,7 @@ public class BlackListNumberService {
         }
 
         for(String number : numbers){
-            if(jedis.sismember("phone_number", number)){
+            if(jedis.sismember( "phone_number", number)){
                 logger.info("Phone Number : " + number + " Already Blacklisted");
                 continue;
             }
