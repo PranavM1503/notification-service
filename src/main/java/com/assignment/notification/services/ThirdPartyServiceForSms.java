@@ -1,15 +1,18 @@
 package com.assignment.notification.services;
 
+import com.assignment.notification.dto.ThirdPartyFailResponse;
 import com.assignment.notification.dto.ThirdPartyResponseDTO;
 import com.assignment.notification.dto.ThirdPartyResponseInterceptorDTO;
 import com.assignment.notification.models.SmsApiModel;
 import com.assignment.notification.entities.SmsRequest;
 import com.assignment.notification.repositories.smsRequestRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
 
@@ -38,7 +41,9 @@ public class ThirdPartyServiceForSms {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
-        headers.set("key", "7b73f76d-369e-11ea-9e4e-025282c394f2");
+        headers.set("key", "7b73f76d-369e-11ea-9e4e-025282c394f21");
+
+        //remove last 1 from key ::::::::::::::: wrong key above
 
 
 
@@ -65,14 +70,29 @@ public class ThirdPartyServiceForSms {
         logger.info(response.getBody().toString());
         logger.info(String.valueOf(response.getStatusCodeValue()));
 
+//        List<ThirdPartyResponseDTO> finalResponseList = new ArrayList<>();
+        try{
+            ThirdPartyResponseInterceptorDTO thirdPartyResponseInterceptorDTO = objectMapper.readValue(response.getBody().toString(), ThirdPartyResponseInterceptorDTO.class);
+            List<ThirdPartyResponseDTO> responseList = thirdPartyResponseInterceptorDTO.getResponse();
+            logger.info(responseList.get(0).getCode());
+            return responseList.get(0);
+        }catch (MismatchedInputException ex){
+            logger.info(ex.getMessage());
+            logger.info("In catch block");
+            ThirdPartyFailResponse thirdPartyFailResponse = objectMapper.readValue(response.getBody().toString(), ThirdPartyFailResponse.class);
+            logger.info(thirdPartyFailResponse.getResponse().getCode());
+            return thirdPartyFailResponse.getResponse();
+
+        }
+
 
         //*******************Intercepting Response body and converting it to object***************
-        ThirdPartyResponseInterceptorDTO thirdPartyResponseInterceptorDTO = objectMapper.readValue(response.getBody().toString(), ThirdPartyResponseInterceptorDTO.class);
-        List<ThirdPartyResponseDTO> responseList = thirdPartyResponseInterceptorDTO.getResponse();
-        logger.info(responseList.get(0).getCode());
+//        ThirdPartyResponseInterceptorDTO thirdPartyResponseInterceptorDTO = objectMapper.readValue(response.getBody().toString(), ThirdPartyResponseInterceptorDTO.class);
+//        List<ThirdPartyResponseDTO> responseList = thirdPartyResponseInterceptorDTO.getResponse();
+//        logger.info(responseList.get(0).getCode());
 //        ResponseEntity<ThirdPartyResponseDTO> response = restTemplate.postForEntity(apiUrl, httpRequest, ThirdPartyResponseDTO.class).getBody();
 //        logger.info(response.toString())
-        logger.info(response.getBody().toString());
+//        logger.info(response.getBody().toString());
 //     *********************************************************************************************
 
 //        ThirdPartyResponseDTO data;
@@ -80,14 +100,14 @@ public class ThirdPartyServiceForSms {
 
 //        logger.info(response.getBody().toString());
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            logger.info("Request Successful");
-        }else{
-//                logger.info("Request Failed");
-            logger.info(String.format(response.getStatusCode().toString()));
-        }
+//        if (response.getStatusCode() == HttpStatus.OK) {
+//            logger.info("Request Successful");
+//        }else{
+////                logger.info("Request Failed");
+//            logger.info(String.format(response.getStatusCode().toString()));
+//        }
 
-        return responseList.get(0);
+//        return null;
     }
 
 }

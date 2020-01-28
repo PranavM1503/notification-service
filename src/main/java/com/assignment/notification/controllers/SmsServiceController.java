@@ -3,6 +3,7 @@ package com.assignment.notification.controllers;
 
 import com.assignment.notification.dto.SmsDetailTransformerDTO;
 import com.assignment.notification.dto.SmsGetRequestDTO;
+import com.assignment.notification.exceptions.InvalidPhoneNumberException;
 import com.assignment.notification.exceptions.RequestNotFoundException;
 import com.assignment.notification.models.exceptionresponse.SendSmsValidationResponse;
 import com.assignment.notification.services.RequestProducerService;
@@ -49,15 +50,12 @@ public class SmsServiceController {
      //*********************************************************************************************/
 
     @RequestMapping(value = "/sms/send", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> smsRequest(@Valid @RequestBody SmsDetailTransformerDTO smsDetailTransformerDTO) {
+    public ResponseEntity<Object> smsRequest(@Valid @RequestBody SmsDetailTransformerDTO smsDetailTransformerDTO) throws InvalidPhoneNumberException {
 
+        if(smsDetailTransformerDTO.getPhoneNumber().substring(0,3).compareTo("+91") != 0){
+            throw new InvalidPhoneNumberException("Invalid Phone Number");
+        }
         SendSmsValidationResponse sendSmsValidationResponse = smsRequestService.saveAndSendSms(smsDetailTransformerDTO);
-
-//        if(sendSmsValidationResponse.getRequest_id() == null){
-//            logger.info("Invalid Request");
-//            throw new SQLException("Invalid Request");
-////            return new ResponseEntity<Object>(sendSmsResponseDTO, HttpStatus.BAD_REQUEST );
-//        }
         return new ResponseEntity<Object>(sendSmsValidationResponse, HttpStatus.OK);
     }
 

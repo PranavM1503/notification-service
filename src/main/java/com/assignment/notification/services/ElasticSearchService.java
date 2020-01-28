@@ -13,8 +13,7 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.*;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.Fuzziness;
@@ -24,6 +23,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.search.Scroll;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
@@ -52,14 +52,8 @@ public class ElasticSearchService {
     }
 
     public void indexSmsData(SmsDetailsForElasticSearch smsDetailsForElasticSearch) throws IOException {
-        Map<String, Object> jsonMap = new HashMap<>();
-//        jsonMap.put("id", smsDetailsForElasticSearch.getId());
-        jsonMap.put("request_id", smsDetailsForElasticSearch.getRequestId().toString());
-        jsonMap.put("phone_number", smsDetailsForElasticSearch.getPhoneNumber());
-        jsonMap.put("message", smsDetailsForElasticSearch.getMessage());
-        jsonMap.put("created_at", smsDetailsForElasticSearch.getCreatedAt());
-        jsonMap.put("updated_at", smsDetailsForElasticSearch.getCreatedAt());
 
+        Map<String, Object> jsonMap = getMapping(smsDetailsForElasticSearch);
         IndexRequest indexRequest = new IndexRequest("smsdata", "smsdataelastic").id(Integer.toString(smsDetailsForElasticSearch.getId())).source(jsonMap);
 //        IndexRequest indexRequest = new IndexRequest("smsData").id(Integer.toString(smsDetailsForElasticSearch.getId())).source(jsonMap);
         IndexResponse indexResponse = client.index(indexRequest, RequestOptions.DEFAULT);
@@ -107,6 +101,51 @@ public class ElasticSearchService {
         return requiredSmsDetails;
     }
 
+//    public List<ElasticQueryForSMSDTO> getAllSmsWithGivenText(String text) throws IOException {
+//
+//        List <ElasticQueryForSMSDTO> requiredSmsDetails = new ArrayList<>();
+//
+//        MatchQueryBuilder matchQueryBuilder;
+//        matchQueryBuilder = QueryBuilders.matchQuery("message", text);
+////                .fuzziness(Fuzziness.AUTO)
+////                .prefixLength(2)
+////                .maxExpansions(10);
+//
+//        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+//        sourceBuilder.query(matchQueryBuilder);
+////        sourceBuilder.from(0);
+//        sourceBuilder.size(3);
+//        sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+//
+//        final Scroll scroll = new Scroll(TimeValue.timeValueMinutes(1L));
+//        SearchRequest searchRequest = new SearchRequest();
+//        searchRequest.indices("smsdata");
+//        searchRequest.source(sourceBuilder);
+//        searchRequest.scroll(scroll);
+//
+//        SearchResponse searchResponse = client.search(searchRequest,RequestOptions.DEFAULT);
+//
+//        String scrollId = searchResponse.getScrollId();
+//
+//        for(SearchHit searchHit : searchResponse.getHits().getHits()){
+////            logger.info(searchHit.getSourceAsString() + "\n");
+//            SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
+//            scrollRequest.scroll(scroll);
+//            searchResponse = client.scroll(scrollRequest, RequestOptions.DEFAULT);
+//            scrollId = searchResponse.getScrollId();
+//
+//            ElasticQueryForSMSDTO smsDetail = new ObjectMapper().readValue(searchHit.getSourceAsString(),ElasticQueryForSMSDTO.class);
+//            requiredSmsDetails.add(smsDetail);
+//        }
+//
+////        ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
+////        clearScrollRequest.addScrollId(scrollId);
+////        ClearScrollResponse clearScrollResponse = client.clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
+////        boolean succeeded = clearScrollResponse.isSucceeded();
+//
+//        return requiredSmsDetails;
+//    }
+
     public List<SmsTimeQueryDTO> getSmsBetweenGivenTime(SmsTimeQueryRequestDTO smsTimeQueryRequestDTO) throws IOException{
         List<SmsTimeQueryDTO> requiredSmsDetails = new ArrayList<>();
 
@@ -121,7 +160,7 @@ public class ElasticSearchService {
 
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.query(resultQuery);
-        sourceBuilder.from(0);
+//        sourceBuilder.from(0);
         sourceBuilder.size(10);
         sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
 
@@ -140,5 +179,16 @@ public class ElasticSearchService {
     }
 
 
+    public Map<String, Object> getMapping(SmsDetailsForElasticSearch smsDetailsForElasticSearch){
+        Map<String, Object> jsonMap = new HashMap<>();
+//        jsonMap.put("id", smsDetailsForElasticSearch.getId());
+        jsonMap.put("request_id", smsDetailsForElasticSearch.getRequestId().toString());
+        jsonMap.put("phone_number", smsDetailsForElasticSearch.getPhoneNumber());
+        jsonMap.put("message", smsDetailsForElasticSearch.getMessage());
+        jsonMap.put("created_at", smsDetailsForElasticSearch.getCreatedAt());
+        jsonMap.put("updated_at", smsDetailsForElasticSearch.getCreatedAt());
+
+        return jsonMap;
+    }
 
 }
