@@ -38,7 +38,7 @@ public class RequestConsumerService {
 
     @KafkaListener(topics = "smsRequest", groupId = "group_id")
 
-    public void consume(String smsId) throws IOException, AlreadyBlackListNumberException{
+    public void consume(String smsId) throws IOException{
 
         logger.info(String.format("#### -> Consumed message -> %s ", smsId));
 
@@ -63,9 +63,12 @@ public class RequestConsumerService {
             elasticSearchService.indexSmsData(smsDetailsForElasticSearch);
             elasticSearchService.getSmsDatabyId(Integer.toString(smsDetailsForElasticSearch.getId()));
 
+
+            /* **************************  Use third party API Service***************** */
 //            ThirdPartyResponseDTO responseDTO = thirdPartyServiceForSms.callThirdParty(smsRequest);
 //            this.updateDB(responseDTO, smsRequest);
 //            logger.info(responseDTO.toString());
+
             logger.info("third party api call successful");
         }
 

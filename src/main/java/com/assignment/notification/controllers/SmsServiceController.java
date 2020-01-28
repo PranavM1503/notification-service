@@ -3,6 +3,7 @@ package com.assignment.notification.controllers;
 
 import com.assignment.notification.dto.SmsDetailTransformerDTO;
 import com.assignment.notification.dto.SmsGetRequestDTO;
+import com.assignment.notification.exceptions.AlreadyBlackListNumberException;
 import com.assignment.notification.exceptions.InvalidPhoneNumberException;
 import com.assignment.notification.exceptions.RequestNotFoundException;
 import com.assignment.notification.models.exceptionresponse.SendSmsValidationResponse;
@@ -25,12 +26,12 @@ public class SmsServiceController {
 
     public static final Logger logger = LoggerFactory.getLogger(SmsServiceController.class);
     private final SmsRequestService smsRequestService;
-    private final RequestProducerService requestProducerService;
+//    private final RequestProducerService requestProducerService;
 
     @Autowired
     public SmsServiceController (SmsRequestService smsRequestService, RequestProducerService requestProducerService){
         this.smsRequestService= smsRequestService;
-        this.requestProducerService = requestProducerService;
+//        this.requestProducerService = requestProducerService;
     }
 
     // *******************************   To Check send sms service ******************************
@@ -50,7 +51,7 @@ public class SmsServiceController {
      //*********************************************************************************************/
 
     @RequestMapping(value = "/sms/send", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> smsRequest(@Valid @RequestBody SmsDetailTransformerDTO smsDetailTransformerDTO) throws InvalidPhoneNumberException {
+    public ResponseEntity<Object> smsRequest(@Valid @RequestBody SmsDetailTransformerDTO smsDetailTransformerDTO) throws InvalidPhoneNumberException{
 
         if(smsDetailTransformerDTO.getPhoneNumber().substring(0,3).compareTo("+91") != 0){
             throw new InvalidPhoneNumberException("Invalid Phone Number");

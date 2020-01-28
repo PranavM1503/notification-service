@@ -1,6 +1,7 @@
 package com.assignment.notification.services;
 
 
+import com.assignment.notification.exceptions.AlreadyBlackListNumberException;
 import com.assignment.notification.models.exceptionresponse.SendSmsValidationResponse;
 import com.assignment.notification.dto.SmsDetailDTO;
 import com.assignment.notification.dto.SmsDetailTransformerDTO;
