@@ -4,6 +4,7 @@ import com.assignment.notification.dto.ElasticQueryForSMSDTO;
 import com.assignment.notification.dto.SmsDetailsForElasticSearch;
 import com.assignment.notification.dto.SmsTimeQueryDTO;
 import com.assignment.notification.dto.SmsTimeQueryRequestDTO;
+import com.assignment.notification.models.ElasticQueryScrollResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.Producer;
@@ -72,79 +73,84 @@ public class ElasticSearchService {
         logger.info(getResponse.toString());
     }
 
-    public List<ElasticQueryForSMSDTO> getAllSmsWithGivenText(String text) throws IOException {
-
-        List <ElasticQueryForSMSDTO> requiredSmsDetails = new ArrayList<>();
-
-        MatchQueryBuilder matchQueryBuilder;
-        matchQueryBuilder = QueryBuilders.matchQuery("message", text)
-                .fuzziness(Fuzziness.AUTO)
-                .prefixLength(2)
-                .maxExpansions(10);
-
-        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        sourceBuilder.query(matchQueryBuilder);
-        sourceBuilder.from(0);
-        sourceBuilder.size(10);
-        sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
-
-        SearchRequest searchRequest = new SearchRequest();
-        searchRequest.indices("smsdata");
-        searchRequest.source(sourceBuilder);
-
-        SearchResponse searchResponse = client.search(searchRequest,RequestOptions.DEFAULT);
-        for(SearchHit searchHit : searchResponse.getHits().getHits()){
-//            logger.info(searchHit.getSourceAsString() + "\n");
-            ElasticQueryForSMSDTO smsDetail = new ObjectMapper().readValue(searchHit.getSourceAsString(),ElasticQueryForSMSDTO.class);
-            requiredSmsDetails.add(smsDetail);
-        }
-        return requiredSmsDetails;
-    }
-
 //    public List<ElasticQueryForSMSDTO> getAllSmsWithGivenText(String text) throws IOException {
 //
 //        List <ElasticQueryForSMSDTO> requiredSmsDetails = new ArrayList<>();
 //
 //        MatchQueryBuilder matchQueryBuilder;
-//        matchQueryBuilder = QueryBuilders.matchQuery("message", text);
-////                .fuzziness(Fuzziness.AUTO)
-////                .prefixLength(2)
-////                .maxExpansions(10);
+//        matchQueryBuilder = QueryBuilders.matchQuery("message", text)
+//                .fuzziness(Fuzziness.AUTO)
+//                .prefixLength(2)
+//                .maxExpansions(10);
 //
 //        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 //        sourceBuilder.query(matchQueryBuilder);
-////        sourceBuilder.from(0);
-//        sourceBuilder.size(3);
+//        sourceBuilder.from(0);
+//        sourceBuilder.size(10);
 //        sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
 //
-//        final Scroll scroll = new Scroll(TimeValue.timeValueMinutes(1L));
 //        SearchRequest searchRequest = new SearchRequest();
 //        searchRequest.indices("smsdata");
 //        searchRequest.source(sourceBuilder);
-//        searchRequest.scroll(scroll);
 //
 //        SearchResponse searchResponse = client.search(searchRequest,RequestOptions.DEFAULT);
-//
-//        String scrollId = searchResponse.getScrollId();
-//
 //        for(SearchHit searchHit : searchResponse.getHits().getHits()){
 ////            logger.info(searchHit.getSourceAsString() + "\n");
-//            SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
-//            scrollRequest.scroll(scroll);
-//            searchResponse = client.scroll(scrollRequest, RequestOptions.DEFAULT);
-//            scrollId = searchResponse.getScrollId();
-//
 //            ElasticQueryForSMSDTO smsDetail = new ObjectMapper().readValue(searchHit.getSourceAsString(),ElasticQueryForSMSDTO.class);
 //            requiredSmsDetails.add(smsDetail);
 //        }
-//
-////        ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
-////        clearScrollRequest.addScrollId(scrollId);
-////        ClearScrollResponse clearScrollResponse = client.clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
-////        boolean succeeded = clearScrollResponse.isSucceeded();
-//
 //        return requiredSmsDetails;
 //    }
+
+    public ElasticQueryScrollResponse getAllSmsWithGivenText(String text, String inputId) throws IOException {
+
+        List <ElasticQueryForSMSDTO> requiredSmsDetails = new ArrayList<>();
+        String scrollId = inputId;
+
+        if(scrollId.equals("")){
+            MatchQueryBuilder matchQueryBuilder;
+            matchQueryBuilder = QueryBuilders.matchQuery("message", text);
+
+            SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+            sourceBuilder.query(matchQueryBuilder);
+            sourceBuilder.size(3);
+            sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+
+            final Scroll scroll = new Scroll(TimeValue.timeValueMinutes(1L));
+            SearchRequest searchRequest = new SearchRequest();
+            searchRequest.indices("smsdata");
+            searchRequest.source(sourceBuilder);
+            searchRequest.scroll(scroll);
+
+            SearchResponse searchResponse = client.search(searchRequest,RequestOptions.DEFAULT);
+            String scrollIdLatest = searchResponse.getScrollId();
+            for(SearchHit searchHit : searchResponse.getHits().getHits()){
+    //            logger.info(searchHit.getSourceAsString() + "\n");
+                ElasticQueryForSMSDTO smsDetail = new ObjectMapper().readValue(searchHit.getSourceAsString(),ElasticQueryForSMSDTO.class);
+                requiredSmsDetails.add(smsDetail);
+            }
+
+            ElasticQueryScrollResponse response = new ElasticQueryScrollResponse(requiredSmsDetails, scrollIdLatest);
+            return response;
+        }
+
+        else{
+            SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
+            scrollRequest.scroll(TimeValue.timeValueSeconds(30));
+            SearchResponse searchScrollResponse = client.scroll(scrollRequest, RequestOptions.DEFAULT);
+            scrollId = searchScrollResponse.getScrollId();
+
+            for(SearchHit searchHit : searchScrollResponse.getHits().getHits()){
+                //            logger.info(searchHit.getSourceAsString() + "\n");
+                ElasticQueryForSMSDTO smsDetail = new ObjectMapper().readValue(searchHit.getSourceAsString(),ElasticQueryForSMSDTO.class);
+                requiredSmsDetails.add(smsDetail);
+            }
+
+            ElasticQueryScrollResponse response = new ElasticQueryScrollResponse(requiredSmsDetails, scrollId);
+            return response;
+
+        }
+    }
 
     public List<SmsTimeQueryDTO> getSmsBetweenGivenTime(SmsTimeQueryRequestDTO smsTimeQueryRequestDTO) throws IOException{
         List<SmsTimeQueryDTO> requiredSmsDetails = new ArrayList<>();
