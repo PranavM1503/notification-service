@@ -9,7 +9,7 @@ import java.util.UUID;
 
 
 @Entity
-@Table(name = "smsDetails")
+@Table(name = "sms_details")
 public class SmsRequest {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
