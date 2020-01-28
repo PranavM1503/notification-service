@@ -26,15 +26,17 @@ public class RequestConsumerService {
     private final smsRequestRepository smsRequestRepository;
     private final ElasticSearchService elasticSearchService;
     private final ThirdPartyServiceForSms thirdPartyServiceForSms;
+    private final Jedis jedis;
 
     @Autowired
-    public RequestConsumerService(smsRequestRepository smsRequestRepository, ElasticSearchService elasticSearchService, ThirdPartyServiceForSms thirdPartyServiceForSms){
+    public RequestConsumerService(smsRequestRepository smsRequestRepository, ElasticSearchService elasticSearchService, ThirdPartyServiceForSms thirdPartyServiceForSms, Jedis jedis){
         this.smsRequestRepository = smsRequestRepository;
         this.elasticSearchService = elasticSearchService;
         this.thirdPartyServiceForSms = thirdPartyServiceForSms;
+        this.jedis = jedis;
     }
 
-    Jedis jedis = new Jedis();
+//    Jedis jedis = new Jedis();
 
     @KafkaListener(topics = "smsRequest", groupId = "group_id")
 

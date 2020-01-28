@@ -26,13 +26,16 @@ public class BlackListNumberService {
 
     public static final Logger logger = LoggerFactory.getLogger(BlackListNumberService.class);
     private BlackListNumberRepository blackListNumberRepository;
+    private Jedis jedis;
 
     @Autowired
-     public BlackListNumberService(BlackListNumberRepository blackListNumberRepository){
+     public BlackListNumberService(BlackListNumberRepository blackListNumberRepository, Jedis jedis){
         this.blackListNumberRepository = blackListNumberRepository;
+        this.jedis = jedis;
     }
 
-    Jedis jedis = new Jedis();
+
+//    Jedis jedis = new Jedis();
 
     public BlackListResponse saveBlackListNumber(BlackListNumberDTO blackListNumberDTO){
 
