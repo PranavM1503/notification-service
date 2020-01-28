@@ -64,10 +64,11 @@ public class ElasticSearchQueryController {
 
         ElasticQueryScrollResponse2 requiredDetails = elasticSearchService.getSmsBetweenGivenTime(smsTimeQueryRequestDTO);
 
-        if(requiredDetails.getQuery().size() > 0){
-            return new ResponseEntity<>(requiredDetails, HttpStatus.OK);
-        }
-        return new ResponseEntity<>("No Record Found", HttpStatus.OK);
+        return new ResponseEntity<>(requiredDetails, HttpStatus.OK);
+//        if(requiredDetails.getQuery().size() > 0){
+//            return new ResponseEntity<>(requiredDetails, HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>("No Record Found", HttpStatus.OK);
     }
 
 //    @RequestMapping(value = "/find-message", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
