@@ -53,7 +53,7 @@ public class ElasticSearchService {
     public void indexSmsData(SmsDetailsForElasticSearch smsDetailsForElasticSearch) throws IOException {
 
         Map<String, Object> jsonMap = getMapping(smsDetailsForElasticSearch);
-        IndexRequest indexRequest = new IndexRequest("smsdata", "smsdataelastic").id(Integer.toString(smsDetailsForElasticSearch.getId())).source(jsonMap);
+        IndexRequest indexRequest = new IndexRequest("smsdata").id(Integer.toString(smsDetailsForElasticSearch.getId())).source(jsonMap);
 //        IndexRequest indexRequest = new IndexRequest("smsData").id(Integer.toString(smsDetailsForElasticSearch.getId())).source(jsonMap);
         IndexResponse indexResponse = client.index(indexRequest, RequestOptions.DEFAULT);
 //        try {
