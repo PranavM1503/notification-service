@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.Producer;
 
 import org.apache.lucene.queryparser.flexible.core.builders.QueryBuilder;
+import org.elasticsearch.ElasticsearchCorruptionException;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -133,10 +134,12 @@ public class ElasticSearchService {
         }
 
         else{
-            SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
-            scrollRequest.scroll(TimeValue.timeValueSeconds(30));
-            SearchResponse searchScrollResponse = client.scroll(scrollRequest, RequestOptions.DEFAULT);
-            scrollId = searchScrollResponse.getScrollId();
+
+
+                SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
+                scrollRequest.scroll(TimeValue.timeValueSeconds(30));
+                SearchResponse searchScrollResponse = client.scroll(scrollRequest, RequestOptions.DEFAULT);
+                scrollId = searchScrollResponse.getScrollId();
 
             for(SearchHit searchHit : searchScrollResponse.getHits().getHits()){
                 //            logger.info(searchHit.getSourceAsString() + "\n");
@@ -161,7 +164,7 @@ public class ElasticSearchService {
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
             sourceBuilder.query(resultQuery);
 //        sourceBuilder.from(0);
-            sourceBuilder.size(3);
+            sourceBuilder.size(2);
             sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
 
             final Scroll scroll = new Scroll(TimeValue.timeValueMinutes(1L));
