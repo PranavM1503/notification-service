@@ -5,6 +5,7 @@ import com.assignment.notification.dto.SmsDetailsForElasticSearch;
 import com.assignment.notification.dto.SmsTimeQueryDTO;
 import com.assignment.notification.dto.SmsTimeQueryRequestDTO;
 import com.assignment.notification.models.ElasticQueryScrollResponse;
+import com.assignment.notification.models.ElasticQueryScrollResponse2;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.Producer;
@@ -113,7 +114,7 @@ public class ElasticSearchService {
 
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
             sourceBuilder.query(matchQueryBuilder);
-            sourceBuilder.size(3);
+            sourceBuilder.size(2);
             sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
 
             final Scroll scroll = new Scroll(TimeValue.timeValueMinutes(1L));
@@ -152,9 +153,58 @@ public class ElasticSearchService {
         }
     }
 
-    public List<SmsTimeQueryDTO> getSmsBetweenGivenTime(SmsTimeQueryRequestDTO smsTimeQueryRequestDTO) throws IOException{
+    public ElasticQueryScrollResponse2 getSmsBetweenGivenTime(SmsTimeQueryRequestDTO smsTimeQueryRequestDTO, String inputId) throws IOException{
         List<SmsTimeQueryDTO> requiredSmsDetails = new ArrayList<>();
+        String scrollId = inputId;
 
+        if(scrollId.equals("")){
+            BoolQueryBuilder resultQuery = getSmsBetweenGivenTimeQueryBuilder(smsTimeQueryRequestDTO);
+
+
+            SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+            sourceBuilder.query(resultQuery);
+//        sourceBuilder.from(0);
+            sourceBuilder.size(3);
+            sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+
+            final Scroll scroll = new Scroll(TimeValue.timeValueMinutes(1L));
+            SearchRequest searchRequest = new SearchRequest();
+            searchRequest.indices("smsdata");
+            searchRequest.source(sourceBuilder);
+            searchRequest.scroll(scroll);
+
+            SearchResponse searchResponse = client.search(searchRequest,RequestOptions.DEFAULT);
+            String scrollIdLatest = searchResponse.getScrollId();
+            for(SearchHit searchHit : searchResponse.getHits().getHits()){
+//            logger.info(searchHit.getSourceAsString() + "\n");
+                ElasticQueryForSMSDTO smsDetail = new ObjectMapper().readValue(searchHit.getSourceAsString(),ElasticQueryForSMSDTO.class);
+                SmsTimeQueryDTO smsTimeQueryDTO = new SmsTimeQueryDTO(smsDetail.getRequest_id(), smsDetail.getMessage());
+                requiredSmsDetails.add(smsTimeQueryDTO);
+            }
+
+            ElasticQueryScrollResponse2 response = new ElasticQueryScrollResponse2(requiredSmsDetails, scrollIdLatest);
+            return response;
+        }
+        else{
+            SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
+            scrollRequest.scroll(TimeValue.timeValueSeconds(30));
+            SearchResponse searchScrollResponse = client.scroll(scrollRequest, RequestOptions.DEFAULT);
+            scrollId = searchScrollResponse.getScrollId();
+
+            for(SearchHit searchHit : searchScrollResponse.getHits().getHits()){
+                ElasticQueryForSMSDTO smsDetail = new ObjectMapper().readValue(searchHit.getSourceAsString(),ElasticQueryForSMSDTO.class);
+                SmsTimeQueryDTO smsTimeQueryDTO = new SmsTimeQueryDTO(smsDetail.getRequest_id(), smsDetail.getMessage());
+                requiredSmsDetails.add(smsTimeQueryDTO);
+            }
+
+            ElasticQueryScrollResponse2 response = new ElasticQueryScrollResponse2(requiredSmsDetails, scrollId);
+            return response;
+        }
+
+    }
+
+
+    public BoolQueryBuilder getSmsBetweenGivenTimeQueryBuilder(SmsTimeQueryRequestDTO smsTimeQueryRequestDTO){
         String phone_number = smsTimeQueryRequestDTO.getPhone_number();
         String startDateTime = smsTimeQueryRequestDTO.getStartDateTime();
         String endDateTime = smsTimeQueryRequestDTO.getEndDateTime();
@@ -164,26 +214,8 @@ public class ElasticSearchService {
 
         BoolQueryBuilder resultQuery = QueryBuilders.boolQuery().must(matchQueryBuilder).must(rangeQueryForTime);
 
-        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        sourceBuilder.query(resultQuery);
-//        sourceBuilder.from(0);
-        sourceBuilder.size(10);
-        sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
-
-        SearchRequest searchRequest = new SearchRequest();
-        searchRequest.indices("smsdata");
-        searchRequest.source(sourceBuilder);
-
-        SearchResponse searchResponse = client.search(searchRequest,RequestOptions.DEFAULT);
-        for(SearchHit searchHit : searchResponse.getHits().getHits()){
-//            logger.info(searchHit.getSourceAsString() + "\n");
-            ElasticQueryForSMSDTO smsDetail = new ObjectMapper().readValue(searchHit.getSourceAsString(),ElasticQueryForSMSDTO.class);
-            SmsTimeQueryDTO smsTimeQueryDTO = new SmsTimeQueryDTO(smsDetail.getRequest_id(), smsDetail.getMessage());
-            requiredSmsDetails.add(smsTimeQueryDTO);
-        }
-        return requiredSmsDetails;
+        return resultQuery;
     }
-
 
     public Map<String, Object> getMapping(SmsDetailsForElasticSearch smsDetailsForElasticSearch){
         Map<String, Object> jsonMap = new HashMap<>();
