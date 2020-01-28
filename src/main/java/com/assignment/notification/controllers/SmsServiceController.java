@@ -6,6 +6,7 @@ import com.assignment.notification.dto.SmsGetRequestDTO;
 import com.assignment.notification.exceptions.AlreadyBlackListNumberException;
 import com.assignment.notification.exceptions.InvalidPhoneNumberException;
 import com.assignment.notification.exceptions.RequestNotFoundException;
+import com.assignment.notification.models.SmsUserSuccessResponse;
 import com.assignment.notification.models.exceptionresponse.SendSmsValidationResponse;
 import com.assignment.notification.services.RequestProducerService;
 import com.assignment.notification.services.SmsRequestService;
@@ -57,7 +58,9 @@ public class SmsServiceController {
             throw new InvalidPhoneNumberException("Invalid Phone Number");
         }
         SendSmsValidationResponse sendSmsValidationResponse = smsRequestService.saveAndSendSms(smsDetailTransformerDTO);
-        return new ResponseEntity<Object>(sendSmsValidationResponse, HttpStatus.OK);
+        SmsUserSuccessResponse smsUserSuccessResponse = new SmsUserSuccessResponse(sendSmsValidationResponse);
+        return new ResponseEntity<Object>(smsUserSuccessResponse, HttpStatus.OK);
+//        return new ResponseEntity<Object>(sendSmsValidationResponse, HttpStatus.OK);
     }
 
 

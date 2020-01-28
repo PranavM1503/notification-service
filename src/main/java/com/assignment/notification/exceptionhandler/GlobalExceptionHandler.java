@@ -6,6 +6,7 @@ import com.assignment.notification.exceptions.AlreadyBlackListNumberException;
 import com.assignment.notification.exceptions.InvalidPhoneNumberException;
 import com.assignment.notification.exceptions.RequestNotFoundException;
 import com.assignment.notification.models.BlackListResponse;
+import com.assignment.notification.models.SmsUserErrorResponse;
 import com.assignment.notification.models.exceptionresponse.ExceptionResponseModel;
 import com.assignment.notification.models.exceptionresponse.GetSmsExceptionResponse;
 import com.assignment.notification.models.exceptionresponse.GetSmsExceptionSubResponse;
@@ -52,7 +53,8 @@ public class GlobalExceptionHandler {
         if(ex.getParameter().getParameterName().equals("smsDetailTransformerDTO")) {
 //            logger.info("Inside 1");
             SendSmsValidationResponse sendSmsValidationResponse = SendSmsValidationResponse.builder().request_id(null).comments(null).code("INVALID_REQUEST").message("phone_number is Invalid").build();
-            return new ResponseEntity<>(sendSmsValidationResponse, HttpStatus.BAD_REQUEST);
+            SmsUserErrorResponse smsUserErrorResponse = new SmsUserErrorResponse(sendSmsValidationResponse);
+            return new ResponseEntity<>(smsUserErrorResponse, HttpStatus.BAD_REQUEST);
         }
         else if(ex.getParameter().getParameterName().equals("blackListNumberDTO")){
             ExceptionResponseModel exceptionResponseModel = ExceptionResponseModel.builder().error("No Numbers found").details("Empty List").build();
@@ -67,7 +69,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handlePhoneNumberExceptions(InvalidPhoneNumberException ex){
         logger.info(ex.getMessage());
         SendSmsValidationResponse sendSmsValidationResponse = SendSmsValidationResponse.builder().request_id(null).comments(null).code("INVALID_REQUEST").message("phone_number is Invalid").build();
-        return new ResponseEntity<>(sendSmsValidationResponse, HttpStatus.BAD_REQUEST);
+        SmsUserErrorResponse smsUserErrorResponse = new SmsUserErrorResponse(sendSmsValidationResponse);
+        return new ResponseEntity<>(smsUserErrorResponse, HttpStatus.BAD_REQUEST);
+//        return new ResponseEntity<>(sendSmsValidationResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AlreadyBlackListNumberException.class)
