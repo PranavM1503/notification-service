@@ -5,11 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Getter
 @Setter @NoArgsConstructor @AllArgsConstructor
 public class SmsTimeQueryRequestDTO {
     private String phone_number;
     private String startDateTime;
     private String endDateTime;
+    private String scrollId;
 
     public String getPhone_number() {
         return phone_number;

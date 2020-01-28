@@ -1,9 +1,6 @@
 package com.assignment.notification.services;
 
-import com.assignment.notification.dto.ElasticQueryForSMSDTO;
-import com.assignment.notification.dto.SmsDetailsForElasticSearch;
-import com.assignment.notification.dto.SmsTimeQueryDTO;
-import com.assignment.notification.dto.SmsTimeQueryRequestDTO;
+import com.assignment.notification.dto.*;
 import com.assignment.notification.models.ElasticQueryScrollResponse;
 import com.assignment.notification.models.ElasticQueryScrollResponse2;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -103,14 +100,14 @@ public class ElasticSearchService {
 //        return requiredSmsDetails;
 //    }
 
-    public ElasticQueryScrollResponse getAllSmsWithGivenText(String text, String inputId) throws IOException {
+    public ElasticQueryScrollResponse getAllSmsWithGivenText(SmsElasticQueryDTO smsElasticQueryDTO) throws IOException {
 
         List <ElasticQueryForSMSDTO> requiredSmsDetails = new ArrayList<>();
-        String scrollId = inputId;
+        String scrollId = smsElasticQueryDTO.getScrollId();
 
         if(scrollId.equals("")){
             MatchQueryBuilder matchQueryBuilder;
-            matchQueryBuilder = QueryBuilders.matchQuery("message", text);
+            matchQueryBuilder = QueryBuilders.matchQuery("message", smsElasticQueryDTO.getText());
 
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
             sourceBuilder.query(matchQueryBuilder);
@@ -153,12 +150,12 @@ public class ElasticSearchService {
         }
     }
 
-    public ElasticQueryScrollResponse2 getSmsBetweenGivenTime(SmsTimeQueryRequestDTO smsTimeQueryRequestDTO, String inputId) throws IOException{
+    public ElasticQueryScrollResponse2 getSmsBetweenGivenTime(SmsTimeQueryRequestDTO smsTimeQueryRequestDTO) throws IOException{
         List<SmsTimeQueryDTO> requiredSmsDetails = new ArrayList<>();
-        String scrollId = inputId;
+        String scrollId = smsTimeQueryRequestDTO.getScrollId();
 
         if(scrollId.equals("")){
-            BoolQueryBuilder resultQuery = getSmsBetweenGivenTimeQueryBuilder(smsTimeQueryRequestDTO);
+            BoolQueryBuilder resultQuery = this.getSmsBetweenGivenTimeQueryBuilder(smsTimeQueryRequestDTO);
 
 
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
@@ -225,7 +222,6 @@ public class ElasticSearchService {
         jsonMap.put("message", smsDetailsForElasticSearch.getMessage());
         jsonMap.put("created_at", smsDetailsForElasticSearch.getCreatedAt());
         jsonMap.put("updated_at", smsDetailsForElasticSearch.getCreatedAt());
-
         return jsonMap;
     }
 
