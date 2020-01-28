@@ -55,7 +55,7 @@ public class RequestConsumerService {
 
         if(isBlackListed){
             logger.info("Blacklisted number");
-            throw new AlreadyBlackListNumberException("BlackListed Number");
+//            throw new AlreadyBlackListNumberException("BlackListed Number");
             //
         }
         else{
