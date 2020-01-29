@@ -1,10 +1,8 @@
 package com.assignment.notification.services;
 
 import com.assignment.notification.dto.SmsDetailsForElasticSearch;
-import com.assignment.notification.dto.ThirdPartyFailResponse;
 import com.assignment.notification.dto.ThirdPartyResponseDTO;
 import com.assignment.notification.entities.SmsRequest;
-import com.assignment.notification.exceptions.AlreadyBlackListNumberException;
 import com.assignment.notification.repositories.smsRequestRepository;
 
 import org.slf4j.Logger;

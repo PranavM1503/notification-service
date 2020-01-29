@@ -1,10 +1,8 @@
 package com.assignment.notification.exceptionhandler;
 
 
-import com.assignment.notification.exceptions.AlreadyBlackListNumberException;
 import com.assignment.notification.exceptions.InvalidPhoneNumberException;
 import com.assignment.notification.exceptions.RequestNotFoundException;
-import com.assignment.notification.models.BlackListResponse;
 import com.assignment.notification.models.SmsUserErrorResponse;
 import com.assignment.notification.models.exceptionresponse.ExceptionResponseModel;
 import com.assignment.notification.models.exceptionresponse.GetSmsExceptionSubResponse;
@@ -69,13 +67,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(smsUserErrorResponse, HttpStatus.BAD_REQUEST);
 //        return new ResponseEntity<>(sendSmsValidationResponse, HttpStatus.BAD_REQUEST);
     }
-
-    @ExceptionHandler(AlreadyBlackListNumberException.class)
-    public ResponseEntity<Object> alreadyBlacklistException(AlreadyBlackListNumberException ex){
-        logger.info(ex.getMessage());
-        BlackListResponse blackListResponse = BlackListResponse.builder().status(ex.getMessage()).build();
-        return new ResponseEntity<>(blackListResponse, HttpStatus.OK);
-    }
+//
+//    @ExceptionHandler(AlreadyBlackListNumberException.class)
+//    public ResponseEntity<Object> alreadyBlacklistException(AlreadyBlackListNumberException ex){
+//        logger.info(ex.getMessage());
+//        BlackListResponse blackListResponse = BlackListResponse.builder().status(ex.getMessage()).build();
+//        return new ResponseEntity<>(blackListResponse, HttpStatus.OK);
+//    }
 
 
 }
