@@ -29,25 +29,18 @@ public class ThirdPartyServiceForSms {
     private final smsRequestRepository smsRequestRepository;
     private final String contentType = "application/json";
     private final String key = "7b73f76d-369e-11ea-9e4e-025282c394f21";
+    //remove last 1 from key ::::::::::::::: wrong key above
 
     @Autowired
     public ThirdPartyServiceForSms(smsRequestRepository smsRequestRepository){
         this.smsRequestRepository = smsRequestRepository;
     }
 
-
-
     public ThirdPartyResponseDTO callThirdParty(SmsRequest smsRequest) throws IOException {
 
         RestTemplate restTemplate = new RestTemplate();
-
         HttpHeaders headers = this.createHeaders(contentType, key);
-
-        //remove last 1 from key ::::::::::::::: wrong key above
-
-        List <String> msisdn = new ArrayList<>();
-        msisdn.add(smsRequest.getPhoneNumber());
-        SmsApiModel smsApiModel = new SmsApiModel(smsRequest.getMessage(), msisdn, smsRequest.getRequestId());
+        SmsApiModel smsApiModel = this.createAPIRequestModel(smsRequest);
 
 //   ********************         json conversion to verify the post request           *******************
         this.verifyJSON(smsApiModel);
@@ -77,6 +70,12 @@ public class ThirdPartyServiceForSms {
 
     }
 
+    public SmsApiModel createAPIRequestModel(SmsRequest smsRequest){
+        List <String> msisdn = new ArrayList<>();
+        msisdn.add(smsRequest.getPhoneNumber());
+        return new SmsApiModel(smsRequest.getMessage(), msisdn, smsRequest.getRequestId());
+    }
+
     public HttpHeaders createHeaders(String type, String key){
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", type);
@@ -86,7 +85,6 @@ public class ThirdPartyServiceForSms {
     }
 
     public void verifyJSON(SmsApiModel smsApiModel){
-
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(smsApiModel);
