@@ -67,9 +67,9 @@ public class RequestConsumerService {
 
 
             /* **************************  Use third party API Service***************** */
-//            ThirdPartyResponseDTO responseDTO = thirdPartyServiceForSms.callThirdParty(smsRequest);
-//            this.updateDB(responseDTO, smsRequest);
-//            logger.info(responseDTO.toString());
+            ThirdPartyResponseDTO responseDTO = thirdPartyServiceForSms.callThirdParty(smsRequest);
+            this.updateDB(responseDTO, smsRequest);
+            logger.info(responseDTO.toString());
 
             logger.info("third party api call successful");
         }

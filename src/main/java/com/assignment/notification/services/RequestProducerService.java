@@ -22,14 +22,7 @@ public class RequestProducerService {
     private KafkaTemplate<String, String> kafkaTemplate;
 
     public void sendRequestToConsumer(String smsId) {
-//        String smsId = argsList.get(0);
-//        String phoneNumber = argsList.get(1);
-
         logger.info(String.format("#### -> Producing message -> %s", smsId));
-//        List <String> argsList = new ArrayList<String>();
-//        argsList.add(smsId);
-//        argsList.add(phoneNumber);
         this.kafkaTemplate.send(TOPIC, smsId);
-//        this.kafkaTemplate.send(TOPIC, smsId, phoneNumber);
     }
 }
