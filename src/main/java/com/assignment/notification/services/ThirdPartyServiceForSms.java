@@ -66,6 +66,11 @@ public class ThirdPartyServiceForSms {
             ThirdPartyFailResponse thirdPartyFailResponse = objectMapper.readValue(response.getBody().toString(), ThirdPartyFailResponse.class);
             logger.info(thirdPartyFailResponse.getResponse().getCode());
             return thirdPartyFailResponse.getResponse();
+        }catch (RestClientException ex){
+            logger.debug(ex.getMessage());
+            logger.info(ex.getClass().toString());
+            ThirdPartyFailResponse thirdPartyFailResponse = objectMapper.readValue(response.getBody().toString(), ThirdPartyFailResponse.class);
+            return  thirdPartyFailResponse.getResponse();
         }
 
     }
