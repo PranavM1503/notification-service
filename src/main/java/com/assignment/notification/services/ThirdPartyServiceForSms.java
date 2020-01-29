@@ -26,7 +26,9 @@ public class ThirdPartyServiceForSms {
     private final String apiUrl = "https://api.imiconnect.in/resources/v1/messaging";
 
     private final Logger logger = LoggerFactory.getLogger(ThirdPartyServiceForSms.class);
-    private smsRequestRepository smsRequestRepository;
+    private final smsRequestRepository smsRequestRepository;
+    private final String contentType = "application/json";
+    private final String key = "7b73f76d-369e-11ea-9e4e-025282c394f21";
 
     @Autowired
     public ThirdPartyServiceForSms(smsRequestRepository smsRequestRepository){
@@ -39,38 +41,27 @@ public class ThirdPartyServiceForSms {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
-        headers.set("key", "7b73f76d-369e-11ea-9e4e-025282c394f21");
+        HttpHeaders headers = this.createHeaders(contentType, key);
 
         //remove last 1 from key ::::::::::::::: wrong key above
 
-
-
         List <String> msisdn = new ArrayList<>();
         msisdn.add(smsRequest.getPhoneNumber());
-
         SmsApiModel smsApiModel = new SmsApiModel(smsRequest.getMessage(), msisdn, smsRequest.getRequestId());
 
 //   ********************         json conversion to verify the post request           *******************
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        try {
-            String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(smsApiModel);
-            logger.info("\n"  + json);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.verifyJSON(smsApiModel);
 //   ******************************************************************************************************
+
         HttpEntity<SmsApiModel> httpRequest = new HttpEntity<>(smsApiModel, headers);
         logger.info(String.format(httpRequest.toString()));
+
         ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, httpRequest, String.class);
-//        ResponseEntity<Object> response = restTemplate.postForEntity(apiUrl, httpRequest, Object.class);
         logger.info(response.toString());
         logger.info(response.getBody().toString());
         logger.info(String.valueOf(response.getStatusCodeValue()));
 
-//        List<ThirdPartyResponseDTO> finalResponseList = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
         try{
             ThirdPartyResponseInterceptorDTO thirdPartyResponseInterceptorDTO = objectMapper.readValue(response.getBody().toString(), ThirdPartyResponseInterceptorDTO.class);
             List<ThirdPartyResponseDTO> responseList = thirdPartyResponseInterceptorDTO.getResponse();
@@ -82,32 +73,26 @@ public class ThirdPartyServiceForSms {
             ThirdPartyFailResponse thirdPartyFailResponse = objectMapper.readValue(response.getBody().toString(), ThirdPartyFailResponse.class);
             logger.info(thirdPartyFailResponse.getResponse().getCode());
             return thirdPartyFailResponse.getResponse();
-
         }
 
-
-        //*******************Intercepting Response body and converting it to object***************
-//        ThirdPartyResponseInterceptorDTO thirdPartyResponseInterceptorDTO = objectMapper.readValue(response.getBody().toString(), ThirdPartyResponseInterceptorDTO.class);
-//        List<ThirdPartyResponseDTO> responseList = thirdPartyResponseInterceptorDTO.getResponse();
-//        logger.info(responseList.get(0).getCode());
-//        ResponseEntity<ThirdPartyResponseDTO> response = restTemplate.postForEntity(apiUrl, httpRequest, ThirdPartyResponseDTO.class).getBody();
-//        logger.info(response.toString())
-//        logger.info(response.getBody().toString());
-//     *********************************************************************************************
-
-//        ThirdPartyResponseDTO data;
-//        data = (ThirdPartyResponseDTO) response.getBody();
-
-//        logger.info(response.getBody().toString());
-
-//        if (response.getStatusCode() == HttpStatus.OK) {
-//            logger.info("Request Successful");
-//        }else{
-////                logger.info("Request Failed");
-//            logger.info(String.format(response.getStatusCode().toString()));
-//        }
-
-//        return null;
     }
 
+    public HttpHeaders createHeaders(String type, String key){
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", type);
+        headers.set("key", key);
+
+        return headers;
+    }
+
+    public void verifyJSON(SmsApiModel smsApiModel){
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(smsApiModel);
+            logger.info("\n"  + json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
