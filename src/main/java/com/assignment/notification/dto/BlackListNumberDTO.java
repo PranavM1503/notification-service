@@ -1,6 +1,7 @@
 package com.assignment.notification.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,11 +13,11 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BlackListNumberDTO {
-    @Size(min = 1)
-    private List <String> phone_number;
+    @Size(min = 1) @JsonProperty("phone_number")
+    private List <String> phoneNumber;
 
     public List<String> getBlackListNumber(){
-        return  phone_number;
+        return  phoneNumber;
     }
 
 
