@@ -28,7 +28,7 @@ public class ThirdPartyServiceForSms {
     private final Logger logger = LoggerFactory.getLogger(ThirdPartyServiceForSms.class);
     private final smsRequestRepository smsRequestRepository;
     private final String contentType = "application/json";
-    private final String key = "7b73f76d-369e-11ea-9e4e-025282c394f21";
+    private final String key = "Enter yout key";
     //remove last 1 from key ::::::::::::::: wrong key above
 
     @Autowired
