@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static com.assignment.notification.constants.Constants.*;
+
 @Service
 public class BlackListNumberService {
 
@@ -42,7 +44,7 @@ public class BlackListNumberService {
         List<String> numbers = blackListNumberDTO.getBlackListNumber();
         BlackListResponse blackListResponse;
         if(numbers.size() < 1){
-            blackListResponse = BlackListResponse.builder().status("No Numbers found").build();
+            blackListResponse = BlackListResponse.builder().status(NO_NUMBERS_FOUND).build();
             return blackListResponse;
         }
 

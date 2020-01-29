@@ -16,6 +16,8 @@ import com.assignment.notification.entities.SmsRequest;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static com.assignment.notification.constants.Constants.*;
+
 @Service
 public class SmsRequestService {
 
@@ -66,12 +68,12 @@ public class SmsRequestService {
     }
 
     public SendSmsValidationResponse sendSuccessResponse(SmsRequest smsRequest){
-        SendSmsValidationResponse sendSmsValidationResponse = SendSmsValidationResponse.builder().request_id(smsRequest.getRequestId()).comments("Successfully Sent").code(null).message(null).build();
+        SendSmsValidationResponse sendSmsValidationResponse = SendSmsValidationResponse.builder().request_id(smsRequest.getRequestId()).comments(SUCCESS).code(null).message(null).build();
         return sendSmsValidationResponse;
     }
 
     public SendSmsValidationResponse sendFailureResponse(){
-        SendSmsValidationResponse sendSmsValidationResponse = SendSmsValidationResponse.builder().request_id(null).comments(null).code("INVALID_REQUEST").message("phone_number is mandatory").build();
+        SendSmsValidationResponse sendSmsValidationResponse = SendSmsValidationResponse.builder().request_id(null).comments(null).code(INVALID_REQUEST).message(MANDATORY_PHONE_NUMBER).build();
         return sendSmsValidationResponse;
     }
 

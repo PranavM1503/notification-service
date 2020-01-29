@@ -18,6 +18,8 @@ import redis.clients.jedis.Jedis;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+import static com.assignment.notification.constants.Constants.*;
+
 
 @Service
 public class RequestConsumerService {
@@ -77,11 +79,11 @@ public class RequestConsumerService {
     }
 
     public void updateDB(ThirdPartyResponseDTO thirdPartyResponseDTO, SmsRequest smsRequest){
-        if(thirdPartyResponseDTO.getCode().equals("1001")){
+        if(thirdPartyResponseDTO.getCode().equals(THIRD_PART_API_SUCCESS_RESPONSE)){
             smsRequest.setStatus(thirdPartyResponseDTO.getDescription());
             smsRequest.setUpdatedAt(LocalDateTime.now().toString());
             smsRequest.setFailureCode(Integer.parseInt(thirdPartyResponseDTO.getCode()));
-            smsRequest.setFailureComments("No failure");
+            smsRequest.setFailureComments(NO_FAILURE);
             smsRequestRepository.save(smsRequest);
         }
 
@@ -89,7 +91,7 @@ public class RequestConsumerService {
             smsRequest.setStatus(thirdPartyResponseDTO.getDescription());
             smsRequest.setUpdatedAt(LocalDateTime.now().toString());
             smsRequest.setFailureCode(Integer.parseInt(thirdPartyResponseDTO.getCode()));
-            smsRequest.setFailureComments("Failed");
+            smsRequest.setFailureComments(FAILED);
             smsRequestRepository.save(smsRequest);
         }
     }

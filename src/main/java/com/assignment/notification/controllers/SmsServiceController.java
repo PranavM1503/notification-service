@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import static com.assignment.notification.constants.Constants.*;
+
 
 @RestController
 @RequestMapping("api/v1")
@@ -55,7 +57,7 @@ public class SmsServiceController {
     public ResponseEntity<Object> smsRequest(@Valid @RequestBody SmsDetailTransformerDTO smsDetailTransformerDTO) throws InvalidPhoneNumberException{
 
         if(smsDetailTransformerDTO.getPhoneNumber().substring(0,3).compareTo("+91") != 0){
-            throw new InvalidPhoneNumberException("Invalid Phone Number");
+            throw new InvalidPhoneNumberException(INVALID_PHONE_NUMBER);
         }
         SendSmsValidationResponse sendSmsValidationResponse = smsRequestService.saveAndSendSms(smsDetailTransformerDTO);
         SmsUserSuccessResponse smsUserSuccessResponse = new SmsUserSuccessResponse(sendSmsValidationResponse);

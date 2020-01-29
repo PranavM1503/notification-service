@@ -27,6 +27,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import static com.assignment.notification.constants.Constants.*;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -52,12 +54,12 @@ public class GlobalExceptionHandler {
 //        logger.info(ex.getCause().toString());
         if(ex.getParameter().getParameterName().equals("smsDetailTransformerDTO")) {
 //            logger.info("Inside 1");
-            SendSmsValidationResponse sendSmsValidationResponse = SendSmsValidationResponse.builder().request_id(null).comments(null).code("INVALID_REQUEST").message("phone_number is Invalid").build();
+            SendSmsValidationResponse sendSmsValidationResponse = SendSmsValidationResponse.builder().request_id(null).comments(null).code(INVALID_REQUEST).message(INVALID_PHONE_NUMBER).build();
             SmsUserErrorResponse smsUserErrorResponse = new SmsUserErrorResponse(sendSmsValidationResponse);
             return new ResponseEntity<>(smsUserErrorResponse, HttpStatus.BAD_REQUEST);
         }
         else if(ex.getParameter().getParameterName().equals("blackListNumberDTO")){
-            ExceptionResponseModel exceptionResponseModel = ExceptionResponseModel.builder().error("No Numbers found").details("Empty List").build();
+            ExceptionResponseModel exceptionResponseModel = ExceptionResponseModel.builder().error(NO_NUMBERS_FOUND).details(EMPTY_LIST).build();
             return new ResponseEntity<>(exceptionResponseModel, HttpStatus.NOT_FOUND);
         }
 
@@ -68,7 +70,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidPhoneNumberException.class)
     public ResponseEntity<Object> handlePhoneNumberExceptions(InvalidPhoneNumberException ex){
         logger.info(ex.getMessage());
-        SendSmsValidationResponse sendSmsValidationResponse = SendSmsValidationResponse.builder().request_id(null).comments(null).code("INVALID_REQUEST").message("phone_number is Invalid").build();
+        SendSmsValidationResponse sendSmsValidationResponse = SendSmsValidationResponse.builder().request_id(null).comments(null).code(INVALID_REQUEST).message(INVALID_PHONE_NUMBER).build();
         SmsUserErrorResponse smsUserErrorResponse = new SmsUserErrorResponse(sendSmsValidationResponse);
         return new ResponseEntity<>(smsUserErrorResponse, HttpStatus.BAD_REQUEST);
 //        return new ResponseEntity<>(sendSmsValidationResponse, HttpStatus.BAD_REQUEST);
