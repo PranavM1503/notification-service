@@ -56,10 +56,6 @@ public class ElasticSearchQueryController {
         ElasticQueryScrollResponse2 requiredDetails = elasticSearchService.getSmsBetweenGivenTime(smsTimeQueryRequestDTO);
 
         return new ResponseEntity<>(requiredDetails, HttpStatus.OK);
-//        if(requiredDetails.getQuery().size() > 0){
-//            return new ResponseEntity<>(requiredDetails, HttpStatus.OK);
-//        }
-//        return new ResponseEntity<>("No Record Found", HttpStatus.OK);
     }
 
 

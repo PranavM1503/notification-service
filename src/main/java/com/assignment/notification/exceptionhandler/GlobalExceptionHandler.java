@@ -65,15 +65,6 @@ public class GlobalExceptionHandler {
         SendSmsValidationResponse sendSmsValidationResponse = SendSmsValidationResponse.builder().request_id(null).comments(null).code(INVALID_REQUEST).message(INVALID_PHONE_NUMBER).build();
         SmsUserErrorResponse smsUserErrorResponse = new SmsUserErrorResponse(sendSmsValidationResponse);
         return new ResponseEntity<>(smsUserErrorResponse, HttpStatus.BAD_REQUEST);
-//        return new ResponseEntity<>(sendSmsValidationResponse, HttpStatus.BAD_REQUEST);
     }
-//
-//    @ExceptionHandler(AlreadyBlackListNumberException.class)
-//    public ResponseEntity<Object> alreadyBlacklistException(AlreadyBlackListNumberException ex){
-//        logger.info(ex.getMessage());
-//        BlackListResponse blackListResponse = BlackListResponse.builder().status(ex.getMessage()).build();
-//        return new ResponseEntity<>(blackListResponse, HttpStatus.OK);
-//    }
-
 
 }

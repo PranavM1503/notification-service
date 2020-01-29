@@ -28,29 +28,11 @@ public class SmsServiceController {
 
     public static final Logger logger = LoggerFactory.getLogger(SmsServiceController.class);
     private final SmsRequestService smsRequestService;
-//    private final RequestProducerService requestProducerService;
 
     @Autowired
-    public SmsServiceController (SmsRequestService smsRequestService, RequestProducerService requestProducerService){
+    public SmsServiceController (SmsRequestService smsRequestService){
         this.smsRequestService= smsRequestService;
-//        this.requestProducerService = requestProducerService;
     }
-
-    // *******************************   To Check send sms service ******************************
-//    @RequestMapping(value = "/sms/send", method = RequestMethod.POST)
-//    public String smsRequest(@RequestBody SmsDetailTransformerDTO smsDetailTransformerDTO){
-//
-//        int smsid = smsRequestService.saveAndSendSms(smsDetailTransformerDTO);
-//        String id = Integer.toString(smsid);
-//        logger.info("Id retrieved is  : %s" , id);
-//
-////        smsid = Integer.parseInt(smsid);
-////        this.requestProducerService.sendRequestToConsumer(id);
-////        logger.info("Id consumed by the consumer service");
-//        return "Success : " + id;
-//    }
-
-     //*********************************************************************************************/
 
     @RequestMapping(value = "/sms/send", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> smsRequest(@Valid @RequestBody SmsDetailTransformerDTO smsDetailTransformerDTO) throws InvalidPhoneNumberException{
@@ -61,7 +43,6 @@ public class SmsServiceController {
         SendSmsValidationResponse sendSmsValidationResponse = smsRequestService.saveAndSendSms(smsDetailTransformerDTO);
         SmsUserSuccessResponse smsUserSuccessResponse = new SmsUserSuccessResponse(sendSmsValidationResponse);
         return new ResponseEntity<Object>(smsUserSuccessResponse, HttpStatus.OK);
-//        return new ResponseEntity<Object>(sendSmsValidationResponse, HttpStatus.OK);
     }
 
 

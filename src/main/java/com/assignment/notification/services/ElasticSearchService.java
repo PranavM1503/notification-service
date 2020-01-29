@@ -55,13 +55,7 @@ public class ElasticSearchService {
 
         Map<String, Object> jsonMap = getMapping(smsDetailsForElasticSearch);
         IndexRequest indexRequest = new IndexRequest("smsdata").id(Integer.toString(smsDetailsForElasticSearch.getId())).source(jsonMap);
-//        IndexRequest indexRequest = new IndexRequest("smsData").id(Integer.toString(smsDetailsForElasticSearch.getId())).source(jsonMap);
         IndexResponse indexResponse = client.index(indexRequest, RequestOptions.DEFAULT);
-//        try {
-//            indexResponse = client.index(indexRequest, RequestOptions.DEFAULT);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
         logger.info(indexResponse.getResult().toString());
     }
@@ -71,35 +65,6 @@ public class ElasticSearchService {
         GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
         logger.info(getResponse.toString());
     }
-
-//    public List<ElasticQueryForSMSDTO> getAllSmsWithGivenText(String text) throws IOException {
-//
-//        List <ElasticQueryForSMSDTO> requiredSmsDetails = new ArrayList<>();
-//
-//        MatchQueryBuilder matchQueryBuilder;
-//        matchQueryBuilder = QueryBuilders.matchQuery("message", text)
-//                .fuzziness(Fuzziness.AUTO)
-//                .prefixLength(2)
-//                .maxExpansions(10);
-//
-//        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-//        sourceBuilder.query(matchQueryBuilder);
-//        sourceBuilder.from(0);
-//        sourceBuilder.size(10);
-//        sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
-//
-//        SearchRequest searchRequest = new SearchRequest();
-//        searchRequest.indices("smsdata");
-//        searchRequest.source(sourceBuilder);
-//
-//        SearchResponse searchResponse = client.search(searchRequest,RequestOptions.DEFAULT);
-//        for(SearchHit searchHit : searchResponse.getHits().getHits()){
-////            logger.info(searchHit.getSourceAsString() + "\n");
-//            ElasticQueryForSMSDTO smsDetail = new ObjectMapper().readValue(searchHit.getSourceAsString(),ElasticQueryForSMSDTO.class);
-//            requiredSmsDetails.add(smsDetail);
-//        }
-//        return requiredSmsDetails;
-//    }
 
     public ElasticQueryScrollResponse getAllSmsWithGivenText(SmsElasticQueryDTO smsElasticQueryDTO) throws IOException {
 

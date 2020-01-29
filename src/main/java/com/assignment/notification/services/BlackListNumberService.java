@@ -37,8 +37,6 @@ public class BlackListNumberService {
     }
 
 
-//    Jedis jedis = new Jedis();
-
     public BlackListResponse saveBlackListNumber(BlackListNumberDTO blackListNumberDTO){
 
         List<String> numbers = blackListNumberDTO.getBlackListNumber();
@@ -97,21 +95,4 @@ public class BlackListNumberService {
         blackListResponse = BlackListResponse.builder().status("Phone Number Not Available").build();
         return blackListResponse;
     }
-
-//
-//    public String removeBlackListNumber(CheckBlackListNumberDTO checkBlackListNumberDTO){
-//
-//        boolean isBlackListedBefore = jedis.sismember("phone_number", checkBlackListNumberDTO.getPhoneNumber());
-//
-//        if(isBlackListedBefore == true){
-//
-//            jedis.srem("phone_number", checkBlackListNumberDTO.getPhoneNumber());
-//            BlackListNumber blackListNumber = new BlackListNumber(checkBlackListNumberDTO.getPhoneNumber());
-//            blackListNumberRepository.delete(blackListNumber);
-//            return checkBlackListNumberDTO.getPhoneNumber() + " is removed from blacklist.";
-//
-//        }
-//        return "No Such Number Found";
-//    }
-
 }

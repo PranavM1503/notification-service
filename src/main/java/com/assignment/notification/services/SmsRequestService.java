@@ -33,10 +33,6 @@ public class SmsRequestService {
 
     public SendSmsValidationResponse saveAndSendSms(SmsDetailTransformerDTO smsDetailTransformerDTO){
 
-//        if(smsDetailTransformerDTO.getPhoneNumber() == ""){
-//            return this.sendFailureResponse();
-//        }
-
         SmsRequest smsRequest = saveSmsToDB(smsDetailTransformerDTO);
         if(smsRequest == null){
             return this.sendFailureResponse();
@@ -75,26 +71,6 @@ public class SmsRequestService {
         SendSmsValidationResponse sendSmsValidationResponse = SendSmsValidationResponse.builder().request_id(null).comments(null).code(INVALID_REQUEST).message(MANDATORY_PHONE_NUMBER).build();
         return sendSmsValidationResponse;
     }
-
-//    public int saveData(SmsDetailTransformerDTO smsDetailTransformerDTO){
-//
-//        SmsDetailDTO smsDetailDTO;
-//        smsDetailDTO = new SmsDetailDTO(smsDetailTransformerDTO.getPhoneNumber(), smsDetailTransformerDTO.getMessage(), LocalDateTime.now(), LocalDateTime.now());
-//        SmsRequest smsRequest = new SmsRequest(smsDetailDTO.getPhoneNumber(), smsDetailDTO.getMessage(), smsDetailDTO.getCreatedAt(), smsDetailDTO.getUpdatedAt());
-//        smsRequestRepository.save(smsRequest);
-//        int id = smsRequest.getId();
-//
-//        return id;
-//    }
-
-//
-//    public int saveData(SmsDetailDTO smsRequestDTO){
-//        SmsRequest SmsRequest;
-//        SmsRequest = new SmsRequest(smsRequestDTO.getPhoneNumber(), smsRequestDTO.getMessage(), smsRequestDTO.getCreatedAt(), smsRequestDTO.getUpdatedAt());
-//        smsRequestRepository.save(SmsRequest);
-//        int id = SmsRequest.getId();
-//        return id;
-//    }
 
     public SmsRequest saveSmsDetails(SmsDetailTransformerDTO smsDetailTransformerDTO){
         SmsDetailDTO smsDetailDTO = SmsDetailDTO.builder().phoneNumber(smsDetailTransformerDTO.getPhoneNumber()).message(smsDetailTransformerDTO.getMessage())
