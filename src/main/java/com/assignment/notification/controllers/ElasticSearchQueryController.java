@@ -34,15 +34,6 @@ public class ElasticSearchQueryController {
         this.elasticSearchService = elasticSearchService;
     }
 
-//    @RequestMapping(value = "/message/{message}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<ElasticQueryScrollResponse> getAllSmsWithGivenText(@PathVariable("message") String message, @RequestParam(value = "inputId", required = false, defaultValue = "") String inputId) throws IOException {
-//
-//        logger.info("Message : " + message);
-//       ElasticQueryScrollResponse requiredDetails = elasticSearchService.getAllSmsWithGivenText(message, inputId);
-//
-//        return new ResponseEntity<>(requiredDetails, HttpStatus.OK);
-//    }
-
     @RequestMapping(value = "/message", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ElasticQueryScrollResponse> getAllSmsWithGivenText(@RequestBody SmsElasticQueryDTO smsElasticQueryDTO) throws IOException {
 
@@ -71,20 +62,6 @@ public class ElasticSearchQueryController {
 //        return new ResponseEntity<>("No Record Found", HttpStatus.OK);
     }
 
-//    @RequestMapping(value = "/find-message", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<Object> getSmsBetweenGivenTime(@RequestBody SmsTimeQueryRequestDTO smsTimeQueryRequestDTO, @RequestParam(value = "inputId", required = false, defaultValue = "") String  inputId) throws IOException{
-//
-//        logger.info("Phone : " + smsTimeQueryRequestDTO.getPhone_number());
-//        logger.info("Start Time : " + smsTimeQueryRequestDTO.getStartDateTime());
-//        logger.info("End Time : " + smsTimeQueryRequestDTO.getEndDateTime());
-//
-//        ElasticQueryScrollResponse2 requiredDetails = elasticSearchService.getSmsBetweenGivenTime(smsTimeQueryRequestDTO, inputId);
-//
-//        if(requiredDetails.getQuery().size() > 0){
-//            return new ResponseEntity<>(requiredDetails, HttpStatus.OK);
-//        }
-//        return new ResponseEntity<>("No Record Found", HttpStatus.OK);
-//    }
 
 
 }
