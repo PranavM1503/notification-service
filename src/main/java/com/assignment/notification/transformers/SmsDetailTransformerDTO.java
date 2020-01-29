@@ -1,4 +1,4 @@
-package com.assignment.notification.dto;
+package com.assignment.notification.transformers;
 
 
 import lombok.*;

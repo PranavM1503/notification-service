@@ -1,18 +1,14 @@
 package com.assignment.notification.exceptionhandler;
 
 
-import com.assignment.notification.dto.SmsDetailTransformerDTO;
 import com.assignment.notification.exceptions.AlreadyBlackListNumberException;
 import com.assignment.notification.exceptions.InvalidPhoneNumberException;
 import com.assignment.notification.exceptions.RequestNotFoundException;
 import com.assignment.notification.models.BlackListResponse;
 import com.assignment.notification.models.SmsUserErrorResponse;
 import com.assignment.notification.models.exceptionresponse.ExceptionResponseModel;
-import com.assignment.notification.models.exceptionresponse.GetSmsExceptionResponse;
 import com.assignment.notification.models.exceptionresponse.GetSmsExceptionSubResponse;
 import com.assignment.notification.models.exceptionresponse.SendSmsValidationResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.kafka.common.network.Send;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -23,8 +19,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import java.io.IOException;
 import java.sql.SQLException;
 
 import static com.assignment.notification.constants.Constants.*;

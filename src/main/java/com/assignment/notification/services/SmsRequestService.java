@@ -1,10 +1,9 @@
 package com.assignment.notification.services;
 
 
-import com.assignment.notification.exceptions.AlreadyBlackListNumberException;
 import com.assignment.notification.models.exceptionresponse.SendSmsValidationResponse;
 import com.assignment.notification.dto.SmsDetailDTO;
-import com.assignment.notification.dto.SmsDetailTransformerDTO;
+import com.assignment.notification.transformers.SmsDetailTransformerDTO;
 import com.assignment.notification.dto.SmsGetRequestDTO;
 import com.assignment.notification.repositories.smsRequestRepository;
 import org.slf4j.Logger;

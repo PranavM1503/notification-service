@@ -1,9 +1,8 @@
 package com.assignment.notification.controllers;
 
 
-import com.assignment.notification.dto.SmsDetailTransformerDTO;
+import com.assignment.notification.transformers.SmsDetailTransformerDTO;
 import com.assignment.notification.dto.SmsGetRequestDTO;
-import com.assignment.notification.exceptions.AlreadyBlackListNumberException;
 import com.assignment.notification.exceptions.InvalidPhoneNumberException;
 import com.assignment.notification.exceptions.RequestNotFoundException;
 import com.assignment.notification.models.SmsUserSuccessResponse;
