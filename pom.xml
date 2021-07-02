@@ -116,7 +116,7 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>LATEST</version>
+			<version>6.8.15</version>
 		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
